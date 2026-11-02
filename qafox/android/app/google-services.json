@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1032149242000",
+    "project_id": "qafox-c24eb",
+    "storage_bucket": "qafox-c24eb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032149242000:android:55b2a64647531896318815",
+        "android_client_info": {
+          "package_name": "com.example.qafox"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqZ0Nf0aUcnUIH0Iht5iQXc3uhNlevYTQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

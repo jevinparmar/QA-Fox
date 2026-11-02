@@ -1,10 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="qafox"
+        android:label="QA Fox"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
+            android:label="QA Fox"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""

@@ -1,9 +1,19 @@
-# Miscellaneous
+# ------------------------------------------------------------------------------
+# Miscellaneous & OS
+# ------------------------------------------------------------------------------
 *.class
 *.log
 *.pyc
 *.swp
+*~
+*.bak
+*.tmp
 .DS_Store
+.DS_Store?
+._*
+Thumbs.db
+Desktop.ini
+ehthumbs.db
 .atom/
 .build/
 .buildlog/
@@ -11,38 +21,105 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+__pycache__/
+scratch/
 
-# IntelliJ related
+# ------------------------------------------------------------------------------
+# IDE & Editors
+# ------------------------------------------------------------------------------
+# IntelliJ / Android Studio
 *.iml
 *.ipr
 *.iws
 .idea/
+cmake-build-*/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Visual Studio Code
+.vscode/
 
-# Flutter/Dart/Pub related
+# Other Editors
+.fleet/
+*.sublime-project
+*.sublime-workspace
+
+# ------------------------------------------------------------------------------
+# Flutter / Dart / Pub
+# ------------------------------------------------------------------------------
 **/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
 /coverage/
+.widget_preview/
 
-# Symbolication related
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Symbolication & Obfuscation
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# ------------------------------------------------------------------------------
+# Android
+# ------------------------------------------------------------------------------
+# Gradle cache & local configuration
+.gradle/
+**/android/.gradle/
+**/android/local.properties
+local.properties
 
-# Widget Preview related
-.widget_preview/
+# Android Studio build output
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+**/android/app/build/
+
+# Signing keys & keystores (Never commit keystores or passwords!)
+*.jks
+*.keystore
+key.properties
+**/android/key.properties
+
+# APK & Bundle binaries
+*.apk
+*.aab
+*.aar
+
+# ------------------------------------------------------------------------------
+# iOS & macOS
+# ------------------------------------------------------------------------------
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/ServiceDefinitions.json
+**/ios/Pods/
+**/ios/.symlinks/
+
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+**/macos/.symlinks/
+
+# ------------------------------------------------------------------------------
+# Linux & Windows Desktop Ephemeral Files
+# ------------------------------------------------------------------------------
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+
+# ------------------------------------------------------------------------------
+# Environment Variables, Secrets & Firebase Debug Logs
+# ------------------------------------------------------------------------------
+.env
+.env.*
+*.env
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
