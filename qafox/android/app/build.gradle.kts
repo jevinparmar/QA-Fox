@@ -9,10 +9,11 @@ plugins {
 
 android {
     namespace = "com.example.qafox"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -41,6 +42,10 @@ android {
     }
 }
 
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+
 kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
@@ -49,4 +54,8 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+tasks.matching { it.name.contains("l8DexDesugarLib") }.configureEach {
+    doNotTrackState("Avoid Gradle 9.3+ output state tracking issue on desugarLibDex")
 }
