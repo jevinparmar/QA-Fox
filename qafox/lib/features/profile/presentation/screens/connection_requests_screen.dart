@@ -45,7 +45,7 @@ class _ConnectionRequestsScreenState
         title: const Text('Connection Requests'),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppColors.primary,
+          indicatorColor: isDark ? AppColors.secondary : AppColors.primary,
           labelColor: isDark ? Colors.white : AppColors.primary,
           unselectedLabelColor: isDark
               ? AppColors.textMutedDark
@@ -113,49 +113,72 @@ class _ConnectionRequestsScreenState
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             TextButton(
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 0,
+                                ),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
                               onPressed: () async {
                                 final scaffold = ScaffoldMessenger.of(context);
-                                await ref
-                                    .read(connectionRepositoryProvider)
-                                    .declineConnectionRequest(req.id);
-                                if (!mounted) return;
-                                scaffold.showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Declined connection request.',
+                                try {
+                                  await ref
+                                      .read(connectionRepositoryProvider)
+                                      .declineConnectionRequest(req.id);
+                                  if (!mounted) return;
+                                  scaffold.showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Declined connection request.'),
                                     ),
-                                  ),
-                                );
+                                  );
+                                } catch (e) {
+                                  if (!mounted) return;
+                                  scaffold.showSnackBar(
+                                    SnackBar(
+                                      content: Text('Failed to decline: $e'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
                               },
                               child: const Text(
                                 'Decline',
                                 style: TextStyle(color: Colors.grey),
                               ),
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 6),
                             SizedBox(
-                              width: 82,
+                              width: 96,
                               child: AppButton(
                                 text: 'Accept',
                                 variant: AppButtonVariant.primary,
                                 height: 34,
-                                width: 82,
+                                width: 96,
+                                fontSize: 13,
                                 onPressed: () async {
-                                  final scaffold = ScaffoldMessenger.of(
-                                    context,
-                                  );
-                                  await ref
-                                      .read(connectionRepositoryProvider)
-                                      .acceptConnectionRequest(req);
-                                  if (!mounted) return;
-                                  scaffold.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Connected with ${req.senderName}!',
+                                  final scaffold = ScaffoldMessenger.of(context);
+                                  try {
+                                    await ref
+                                        .read(connectionRepositoryProvider)
+                                        .acceptConnectionRequest(req);
+                                    if (!mounted) return;
+                                    scaffold.showSnackBar(
+                                      SnackBar(
+                                        content: Text('Connected with ${req.senderName}!'),
+                                        backgroundColor: Colors.green,
                                       ),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
+                                    );
+                                  } catch (e) {
+                                    if (!mounted) return;
+                                    scaffold.showSnackBar(
+                                      SnackBar(
+                                        content: Text('Failed to accept: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
                                 },
                               ),
                             ),
@@ -233,15 +256,25 @@ class _ConnectionRequestsScreenState
                             width: 84,
                             onPressed: () async {
                               final scaffold = ScaffoldMessenger.of(context);
-                              await ref
-                                  .read(connectionRepositoryProvider)
-                                  .cancelSentRequest(req.id);
-                              if (!mounted) return;
-                              scaffold.showSnackBar(
-                                const SnackBar(
-                                  content: Text('Request cancelled.'),
-                                ),
-                              );
+                              try {
+                                await ref
+                                    .read(connectionRepositoryProvider)
+                                    .cancelSentRequest(req.id);
+                                if (!mounted) return;
+                                scaffold.showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Request cancelled.'),
+                                  ),
+                                );
+                              } catch (e) {
+                                if (!mounted) return;
+                                scaffold.showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to cancel: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ),

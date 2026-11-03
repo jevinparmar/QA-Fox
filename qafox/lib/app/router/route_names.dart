@@ -25,6 +25,7 @@ class RouteNames {
   static const String createOrganization = 'create-organization';
   static const String organizationDetails = 'organization-details';
   static const String editProfile = 'edit-profile';
+  static const String userProfile = 'user-profile';
   static const String settings = 'settings';
   static const String notifications = 'notifications';
 }

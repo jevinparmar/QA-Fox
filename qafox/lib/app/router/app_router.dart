@@ -25,7 +25,9 @@ import '../../features/organizations/presentation/screens/organization_list_scre
 import '../../features/profile/presentation/screens/connection_requests_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/user_profile_screen.dart';
 import '../../features/profile/presentation/screens/user_search_screen.dart';
+import '../../shared/models/user_model.dart';
 import '../../features/projects/presentation/screens/create_project_screen.dart';
 import '../../features/projects/presentation/screens/project_details_screen.dart';
 import '../../features/projects/presentation/screens/project_list_screen.dart';
@@ -302,6 +304,21 @@ final routerProvider = Provider<GoRouter>((ref) {
           state: state,
           child: const EditProfileScreen(),
         ),
+      ),
+      GoRoute(
+        path: RoutePaths.userProfile,
+        name: RouteNames.userProfile,
+        pageBuilder: (context, state) {
+          final userId = state.pathParameters['userId']!;
+          final initialUser = state.extra as UserModel?;
+          return _buildFadeSlidePage(
+            state: state,
+            child: UserProfileScreen(
+              userId: userId,
+              initialUser: initialUser,
+            ),
+          );
+        },
       ),
       GoRoute(
         path: RoutePaths.settings,

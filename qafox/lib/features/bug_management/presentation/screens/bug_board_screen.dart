@@ -24,10 +24,17 @@ class BugBoardScreen extends ConsumerStatefulWidget {
 }
 
 class _BugBoardScreenState extends ConsumerState<BugBoardScreen> {
+  final TextEditingController _searchController = TextEditingController();
   bool _isKanbanView = false;
   String _searchQuery = '';
   BugStatus? _selectedStatusFilter;
   BugSeverity? _selectedSeverityFilter;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +73,21 @@ class _BugBoardScreenState extends ConsumerState<BugBoardScreen> {
                   vertical: 4.0,
                 ),
                 child: TextField(
+                  controller: _searchController,
                   onChanged: (val) =>
                       setState(() => _searchQuery = val.trim().toLowerCase()),
                   decoration: InputDecoration(
                     hintText: 'Search bugs by ID, title, or assignee...',
                     prefixIcon: const Icon(Icons.search, size: 20),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 18),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _searchQuery = '');
+                            },
+                          )
+                        : null,
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -82,7 +99,24 @@ class _BugBoardScreenState extends ConsumerState<BugBoardScreen> {
                     filled: true,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
+                      borderSide: BorderSide(
+                        color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                        width: 1,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: isDark ? AppColors.secondary : AppColors.primary,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -102,7 +136,7 @@ class _BugBoardScreenState extends ConsumerState<BugBoardScreen> {
                       selected: _selectedStatusFilter == null,
                       onSelected: (_) =>
                           setState(() => _selectedStatusFilter = null),
-                      selectedColor: AppColors.primary,
+                      selectedColor: isDark ? AppColors.secondary : AppColors.primary,
                       labelStyle: TextStyle(
                         color: _selectedStatusFilter == null
                             ? Colors.white

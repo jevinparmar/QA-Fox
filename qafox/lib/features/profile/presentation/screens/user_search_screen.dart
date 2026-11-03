@@ -138,7 +138,24 @@ class _UserSearchScreenState extends ConsumerState<UserSearchScreen> {
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(
+                    color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                    width: 1,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide(
+                    color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide(
+                    color: isDark ? AppColors.secondary : AppColors.primary,
+                    width: 1.5,
+                  ),
                 ),
               ),
             ),
@@ -195,6 +212,11 @@ class _UserSearchScreenState extends ConsumerState<UserSearchScreen> {
           onTap: () {
             if (isSelf) {
               context.push(RoutePaths.profile);
+            } else {
+              context.push(
+                RoutePaths.userProfilePath(targetUser.id),
+                extra: targetUser,
+              );
             }
           },
           child: Padding(
@@ -267,13 +289,14 @@ class _UserSearchScreenState extends ConsumerState<UserSearchScreen> {
                 ),
                 const SizedBox(width: 10),
                 SizedBox(
-                  width: 96,
+                  width: 100,
                   child: isSelf
                       ? AppButton(
                           text: 'Profile',
                           variant: AppButtonVariant.outline,
                           height: 36,
-                          width: 96,
+                          width: 100,
+                          fontSize: 13,
                           onPressed: () => context.push(RoutePaths.profile),
                         )
                       : isConnected
@@ -281,7 +304,8 @@ class _UserSearchScreenState extends ConsumerState<UserSearchScreen> {
                           text: 'Message',
                           variant: AppButtonVariant.primary,
                           height: 36,
-                          width: 96,
+                          width: 100,
+                          fontSize: 13,
                           onPressed: () async {
                             if (currentUser == null) return;
                             final chatId = await ref
@@ -301,14 +325,16 @@ class _UserSearchScreenState extends ConsumerState<UserSearchScreen> {
                           text: 'Pending',
                           variant: AppButtonVariant.outline,
                           height: 36,
-                          width: 96,
+                          width: 100,
+                          fontSize: 13,
                           onPressed: () {},
                         )
                       : AppButton(
                           text: 'Connect',
                           variant: AppButtonVariant.fox,
                           height: 36,
-                          width: 96,
+                          width: 100,
+                          fontSize: 13,
                           onPressed: () async {
                             if (currentUser == null) return;
                             final scaffold = ScaffoldMessenger.of(context);
@@ -377,12 +403,20 @@ class _UserSearchScreenState extends ConsumerState<UserSearchScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 child: Row(
                   children: [
-                    AppAvatar(
-                      name: user.fullName,
-                      imageUrl: user.photoUrl,
-                      size: 46,
-                      isOnline: user.isOnline,
-                      showOnlineIndicator: true,
+                    GestureDetector(
+                      onTap: () {
+                        context.push(
+                          RoutePaths.userProfilePath(user.id),
+                          extra: user,
+                        );
+                      },
+                      child: AppAvatar(
+                        name: user.fullName,
+                        imageUrl: user.photoUrl,
+                        size: 46,
+                        isOnline: user.isOnline,
+                        showOnlineIndicator: true,
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -413,12 +447,13 @@ class _UserSearchScreenState extends ConsumerState<UserSearchScreen> {
                     ),
                     const SizedBox(width: 10),
                     SizedBox(
-                      width: 96,
+                      width: 100,
                       child: AppButton(
                         text: 'Message',
                         variant: AppButtonVariant.outline,
                         height: 36,
-                        width: 96,
+                        width: 100,
+                        fontSize: 13,
                         onPressed: () async {
                           if (currentUser == null) return;
                           final chatId = await ref

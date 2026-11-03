@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qafox/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:qafox/features/settings/presentation/screens/settings_screen.dart';
+import 'package:qafox/shared/providers/notification_providers.dart';
 
 void main() {
   group('Auth & Settings Screen Widget Tests', () {
@@ -10,7 +11,14 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const ProviderScope(child: MaterialApp(home: NotificationsScreen())),
+        ProviderScope(
+          overrides: [
+            userNotificationsStreamProvider.overrideWith(
+              (ref) => Stream.value([]),
+            ),
+          ],
+          child: const MaterialApp(home: NotificationsScreen()),
+        ),
       );
 
       await tester.pumpAndSettle();

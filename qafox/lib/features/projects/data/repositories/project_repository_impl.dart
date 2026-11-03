@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/firestore_constants.dart';
 import '../../../../core/enums/app_status.dart';
 import '../../../../core/services/firebase/firestore_service.dart';
+import '../../../../core/utils/logger.dart';
 import '../../../../shared/models/chat_model.dart';
 import '../../../../shared/models/message_model.dart';
 import '../../../../shared/models/project_model.dart';
@@ -149,66 +151,71 @@ class ProjectRepositoryImpl implements ProjectRepository {
     String? addedByName,
   }) async {
     if (userIds.isEmpty) return;
-    final batch = _firestore.batch();
     final projRef = _firestore.doc('${FirestoreConstants.projects}/$projectId');
     final projDoc = await projRef.get();
     if (!projDoc.exists) return;
 
     final groupChatId = projDoc.data()?['groupChatId'] as String?;
-    batch.update(projRef, {'memberIds': FieldValue.arrayUnion(userIds)});
+    await projRef.set({
+      'memberIds': FieldValue.arrayUnion(userIds),
+    }, SetOptions(merge: true));
 
     if (groupChatId != null) {
       final chatRef = _firestore.doc(
         '${FirestoreConstants.chats}/$groupChatId',
       );
-      batch.update(chatRef, {'participantIds': FieldValue.arrayUnion(userIds)});
-
-      // Post system announcement message
-      final sysMsgId = _uuid.v4();
-      final sysMsgRef = _firestore.doc(
-        '${FirestoreConstants.chats}/$groupChatId/${FirestoreConstants.messages}/$sysMsgId',
-      );
-      final msgText = addedByName != null
-          ? '👑 Group Master $addedByName added ${userIds.length} member(s) to the group.'
-          : 'New members joined the group.';
-      batch.set(sysMsgRef, {
-        'id': sysMsgId,
-        'chatId': groupChatId,
-        'senderId': 'system',
-        'senderName': 'System',
-        'content': msgText,
-        'type': MessageType.system.name,
-        'deletedFor': <String>[],
-        'isDeletedForEveryone': false,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      await chatRef.set({
+        'participantIds': FieldValue.arrayUnion(userIds),
+      }, SetOptions(merge: true));
     }
 
-    await batch.commit();
+    // Post announcement message as a separate operation so message rules don't block adding members
+    if (groupChatId != null) {
+      try {
+        final currentUid = FirebaseAuth.instance.currentUser?.uid ?? 'system';
+        final sysMsgId = _uuid.v4();
+        final msgText = addedByName != null
+            ? '👑 Group Master $addedByName added ${userIds.length} member(s) to the group.'
+            : 'New members joined the group.';
+        await _firestore.setDoc(
+          '${FirestoreConstants.chats}/$groupChatId/${FirestoreConstants.messages}/$sysMsgId',
+          {
+            'id': sysMsgId,
+            'chatId': groupChatId,
+            'senderId': currentUid,
+            'senderName': addedByName ?? 'System',
+            'content': msgText,
+            'type': MessageType.system.name,
+            'deletedFor': <String>[],
+            'isDeletedForEveryone': false,
+            'createdAt': FieldValue.serverTimestamp(),
+          },
+        );
+      } catch (e) {
+        AppLogger.warning('Could not post join announcement message: $e');
+      }
+    }
   }
 
   @override
   Future<void> removeMemberFromProject(String projectId, String userId) async {
-    final batch = _firestore.batch();
     final projRef = _firestore.doc('${FirestoreConstants.projects}/$projectId');
     final projDoc = await projRef.get();
     if (!projDoc.exists) return;
 
     final groupChatId = projDoc.data()?['groupChatId'] as String?;
-    batch.update(projRef, {
+    await projRef.set({
       'memberIds': FieldValue.arrayRemove([userId]),
-    });
+    }, SetOptions(merge: true));
 
     if (groupChatId != null) {
       final chatRef = _firestore.doc(
         '${FirestoreConstants.chats}/$groupChatId',
       );
-      batch.update(chatRef, {
+      await chatRef.set({
         'participantIds': FieldValue.arrayRemove([userId]),
-      });
+      }, SetOptions(merge: true));
     }
-
-    await batch.commit();
   }
 
   @override

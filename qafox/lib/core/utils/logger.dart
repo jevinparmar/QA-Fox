@@ -17,6 +17,13 @@ class AppLogger {
     }
   }
 
+  static void warning(String message, [dynamic error]) {
+    if (kDebugMode) {
+      debugPrint('[WARNING] ⚠️ $message');
+      if (error != null) debugPrint('Error: $error');
+    }
+  }
+
   static void error(String message, [dynamic error, StackTrace? stackTrace]) {
     debugPrint('[ERROR] 🛑 $message');
     if (error != null) debugPrint('Error: $error');

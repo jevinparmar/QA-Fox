@@ -81,12 +81,13 @@ class ProjectDetailsScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.15),
+                          color: (isDark ? AppColors.secondary : AppColors.primary)
+                              .withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.folder,
-                          color: AppColors.primary,
+                          color: isDark ? AppColors.secondary : AppColors.primary,
                           size: 32,
                         ),
                       ),
@@ -160,7 +161,7 @@ class ProjectDetailsScreen extends ConsumerWidget {
                         icon: Icons.chat,
                         title: 'Group Chat',
                         subtitle: 'Testing channel',
-                        color: AppColors.primary,
+                        color: isDark ? AppColors.secondary : AppColors.primary,
                         onTap: () => context.push(
                           RoutePaths.chatDetailsPath(project.groupChatId),
                         ),
@@ -279,13 +280,13 @@ class ProjectDetailsScreen extends ConsumerWidget {
                             return a.fullName.compareTo(b.fullName);
                           });
 
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColors.surfaceDark
-                                : Colors.white,
+                        return Material(
+                          color: isDark
+                              ? AppColors.surfaceDark
+                              : Colors.white,
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
+                            side: BorderSide(
                               color: isDark
                                   ? AppColors.borderDark
                                   : AppColors.borderLight,
@@ -308,6 +309,16 @@ class ProjectDetailsScreen extends ConsumerWidget {
                               final isCurrent = member.id == currentUser?.id;
 
                               return ListTile(
+                                onTap: () {
+                                  if (isCurrent) {
+                                    context.push(RoutePaths.profile);
+                                  } else {
+                                    context.push(
+                                      RoutePaths.userProfilePath(member.id),
+                                      extra: member,
+                                    );
+                                  }
+                                },
                                 leading: AppAvatar(
                                   name: member.fullName,
                                   imageUrl: member.photoUrl,
@@ -354,7 +365,9 @@ class ProjectDetailsScreen extends ConsumerWidget {
                                   ],
                                 ),
                                 subtitle: Text(
-                                  '@${member.username} • ${member.email}',
+                                  isCurrent
+                                      ? '@${member.username} • ${member.email}'
+                                      : '@${member.username} • ${member.designation ?? 'Tester'}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(

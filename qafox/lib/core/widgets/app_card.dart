@@ -36,26 +36,45 @@ class AppCard extends StatelessWidget {
     final effectiveBg =
         color ?? (isDark ? AppColors.surfaceDark : AppColors.surfaceLight);
 
-    Widget content = Container(
+    Widget cardBody = Padding(
       padding: padding,
-      decoration: BoxDecoration(
-        color: gradient == null ? effectiveBg : null,
-        gradient: gradient,
-        borderRadius: effectiveRadius,
-        border: Border.all(color: effectiveBorder, width: borderWidth),
-      ),
       child: child,
     );
 
-    if (onTap != null) {
-      content = Material(
-        color: Colors.transparent,
-        borderRadius: effectiveRadius,
-        child: InkWell(
-          onTap: onTap,
+    Widget content;
+    if (gradient != null) {
+      content = Container(
+        decoration: BoxDecoration(
+          gradient: gradient,
           borderRadius: effectiveRadius,
-          child: content,
+          border: Border.all(color: effectiveBorder, width: borderWidth),
         ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: effectiveRadius,
+          child: onTap != null
+              ? InkWell(
+                  onTap: onTap,
+                  borderRadius: effectiveRadius,
+                  child: cardBody,
+                )
+              : cardBody,
+        ),
+      );
+    } else {
+      content = Material(
+        color: effectiveBg,
+        shape: RoundedRectangleBorder(
+          borderRadius: effectiveRadius,
+          side: BorderSide(color: effectiveBorder, width: borderWidth),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: onTap != null
+            ? InkWell(
+                onTap: onTap,
+                child: cardBody,
+              )
+            : cardBody,
       );
     }
 

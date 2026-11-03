@@ -63,11 +63,13 @@ class BugReportMessageCard extends StatelessWidget {
           ],
         ),
         child: Material(
-          color: isDark ? const Color(0xFF1E1B4B) : const Color(0xFFFBF8FF),
+          color: isDark ? const Color(0xFF181E2E) : const Color(0xFFFBF8FF),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
             side: BorderSide(
-              color: isDark ? const Color(0xFF4C1D95) : const Color(0xFFDDD6FE),
+              color: isDark
+                  ? AppColors.secondary.withValues(alpha: 0.35)
+                  : const Color(0xFFDDD6FE),
               width: 1.1,
             ),
           ),
@@ -304,8 +306,8 @@ class BugReportMessageCard extends StatelessWidget {
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: onTap,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 6,
                             vertical: 2,
                           ),
@@ -317,14 +319,18 @@ class BugReportMessageCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.primary,
+                                  color: isDark
+                                      ? AppColors.secondary
+                                      : AppColors.primary,
                                 ),
                               ),
-                              SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               Icon(
                                 Icons.arrow_forward_ios,
                                 size: 10,
-                                color: AppColors.primary,
+                                color: isDark
+                                    ? AppColors.secondary
+                                    : AppColors.primary,
                               ),
                             ],
                           ),

@@ -15,6 +15,8 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double height;
   final BorderRadius? borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final double? fontSize;
 
   const AppButton({
     super.key,
@@ -26,32 +28,67 @@ class AppButton extends StatelessWidget {
     this.width,
     this.height = AppDimensions.buttonHeight,
     this.borderRadius,
+    this.padding,
+    this.fontSize,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final effectiveRadius = borderRadius ?? AppDimensions.borderRadiusMd;
+    final primaryAccent = isDark ? AppColors.secondary : AppColors.primary;
+    final isCompact = height <= 38;
+    final effectivePadding = padding ??
+        (isCompact
+            ? const EdgeInsets.symmetric(horizontal: 8, vertical: 0)
+            : const EdgeInsets.symmetric(horizontal: 16, vertical: 0));
+    final effectiveFontSize = fontSize ?? (isCompact ? 12.5 : 15.0);
 
     if (variant == AppButtonVariant.text) {
       return TextButton(
         onPressed: isLoading ? null : onPressed,
+        style: TextButton.styleFrom(
+          foregroundColor: primaryAccent,
+          padding: effectivePadding,
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          visualDensity: VisualDensity.compact,
+        ),
         child: isLoading
             ? const AppLoader(size: 18)
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[icon!, const SizedBox(width: 8)],
-                  Flexible(
+            : (icon != null
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      icon!,
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            text,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: effectiveFontSize,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : FittedBox(
+                    fit: BoxFit.scaleDown,
                     child: Text(
                       text,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: effectiveFontSize,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  )),
       );
     }
 
@@ -62,31 +99,56 @@ class AppButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: AppColors.primary, width: 1.5),
+            foregroundColor: primaryAccent,
+            side: BorderSide(color: primaryAccent, width: 1.5),
             shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
+            padding: effectivePadding,
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
           ),
           child: isLoading
               ? const AppLoader(size: 20)
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (icon != null) ...[icon!, const SizedBox(width: 8)],
-                    Flexible(
+              : (icon != null
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        icon!,
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              text,
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: primaryAccent,
+                                fontWeight: FontWeight.w600,
+                                fontSize: effectiveFontSize,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : FittedBox(
+                      fit: BoxFit.scaleDown,
                       child: Text(
                         text,
                         maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          color: primaryAccent,
+                          fontWeight: FontWeight.w600,
+                          fontSize: effectiveFontSize,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    )),
         ),
       );
     }
 
-    Color bgColor = AppColors.primary;
+    Color bgColor = isDark ? AppColors.primaryLight : AppColors.primary;
     Color fgColor = Colors.white;
 
     switch (variant) {
@@ -101,7 +163,7 @@ class AppButton extends StatelessWidget {
         break;
       case AppButtonVariant.primary:
       default:
-        bgColor = AppColors.primary;
+        bgColor = isDark ? AppColors.primaryLight : AppColors.primary;
         break;
     }
 
@@ -115,29 +177,50 @@ class AppButton extends StatelessWidget {
           foregroundColor: fgColor,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
+          padding: effectivePadding,
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          visualDensity: VisualDensity.compact,
         ),
         child: isLoading
             ? const AppLoader(size: 20, color: Colors.white)
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[icon!, const SizedBox(width: 8)],
-                  Flexible(
+            : (icon != null
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      icon!,
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            text,
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: fgColor,
+                              fontSize: effectiveFontSize,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : FittedBox(
+                    fit: BoxFit.scaleDown,
                     child: Text(
                       text,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: fgColor,
-                        fontSize: 15,
+                        fontSize: effectiveFontSize,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.2,
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  )),
       ),
     );
   }

@@ -400,74 +400,143 @@ class _MultiBugComposerScreenState
                         const SizedBox(height: 16),
 
                         // Collapsible Additional Details (Steps to reproduce, URLs, etc.)
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Row(
-                            children: [
-                              Text(
-                                'Reproduction & Expected Steps',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark
-                                      ? AppColors.textMainDark
-                                      : AppColors.textMainLight,
-                                ),
+                        Material(
+                          color: isDark
+                              ? AppColors.surfaceDark
+                              : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(12),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () =>
+                                setState(() => _showAdvanced = !_showAdvanced),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
                               ),
-                              const SizedBox(width: 8),
-                              Icon(
-                                _showAdvanced
-                                    ? Icons.keyboard_arrow_up
-                                    : Icons.keyboard_arrow_down,
-                                size: 18,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.playlist_add_check_rounded,
+                                    size: 18,
+                                    color: isDark
+                                        ? AppColors.secondary
+                                        : AppColors.primary,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Reproduction & Expected Steps',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: isDark
+                                            ? AppColors.textMainDark
+                                            : AppColors.textMainLight,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: (isDark
+                                              ? AppColors.secondary
+                                              : AppColors.primary)
+                                          .withValues(alpha: 0.12),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      _showAdvanced ? 'Hide' : 'Optional',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark
+                                            ? AppColors.secondary
+                                            : AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    _showAdvanced
+                                        ? Icons.keyboard_arrow_up
+                                        : Icons.keyboard_arrow_down,
+                                    size: 20,
+                                    color: isDark
+                                        ? AppColors.textSecondaryDark
+                                        : AppColors.textSecondaryLight,
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                          onTap: () =>
-                              setState(() => _showAdvanced = !_showAdvanced),
                         ),
 
                         if (_showAdvanced) ...[
-                          AppTextField(
-                            controller: _screenController,
-                            labelText: 'Screen / Page Name',
-                            hintText: 'e.g. Auth / Sign In Screen',
-                            onChanged: (val) => currentDraft.screenName = val,
+                          const SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? AppColors.surfaceDark.withValues(alpha: 0.6)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isDark
+                                    ? AppColors.borderDark
+                                    : AppColors.borderLight,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                AppTextField(
+                                  controller: _screenController,
+                                  labelText: 'Screen / Page Name',
+                                  hintText: 'e.g. Auth / Sign In Screen',
+                                  onChanged: (val) =>
+                                      currentDraft.screenName = val,
+                                ),
+                                const SizedBox(height: 12),
+                                AppTextField(
+                                  controller: _urlController,
+                                  labelText: 'URL (Optional)',
+                                  hintText: 'https://staging.app.com/login',
+                                  onChanged: (val) => currentDraft.url = val,
+                                ),
+                                const SizedBox(height: 12),
+                                AppTextField(
+                                  controller: _stepsController,
+                                  labelText: 'Steps to Reproduce',
+                                  hintText:
+                                      '1. Open app\n2. Tap Sign In\n3. Click Login button',
+                                  maxLines: 3,
+                                  onChanged: (val) =>
+                                      currentDraft.stepsToReproduce = val,
+                                ),
+                                const SizedBox(height: 12),
+                                AppTextField(
+                                  controller: _expectedController,
+                                  labelText: 'Expected Result',
+                                  hintText: 'What should have happened...',
+                                  maxLines: 2,
+                                  onChanged: (val) =>
+                                      currentDraft.expectedResult = val,
+                                ),
+                                const SizedBox(height: 12),
+                                AppTextField(
+                                  controller: _actualController,
+                                  labelText: 'Actual Result',
+                                  hintText: 'What actually happened instead...',
+                                  maxLines: 2,
+                                  onChanged: (val) =>
+                                      currentDraft.actualResult = val,
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 12),
-                          AppTextField(
-                            controller: _urlController,
-                            labelText: 'URL (Optional)',
-                            hintText: 'https://staging.app.com/login',
-                            onChanged: (val) => currentDraft.url = val,
-                          ),
-                          const SizedBox(height: 12),
-                          AppTextField(
-                            controller: _stepsController,
-                            labelText: 'Steps to Reproduce',
-                            hintText: '1. Open app\n2. Tap Sign In\n3. Click Login button',
-                            maxLines: 3,
-                            onChanged: (val) =>
-                                currentDraft.stepsToReproduce = val,
-                          ),
-                          const SizedBox(height: 12),
-                          AppTextField(
-                            controller: _expectedController,
-                            labelText: 'Expected Result',
-                            hintText: 'What should have happened...',
-                            maxLines: 2,
-                            onChanged: (val) =>
-                                currentDraft.expectedResult = val,
-                          ),
-                          const SizedBox(height: 12),
-                          AppTextField(
-                            controller: _actualController,
-                            labelText: 'Actual Result',
-                            hintText: 'What actually happened instead...',
-                            maxLines: 2,
-                            onChanged: (val) => currentDraft.actualResult = val,
-                          ),
-                          const SizedBox(height: 12),
                         ],
 
                         const SizedBox(height: 80),
@@ -514,13 +583,14 @@ class _MultiBugComposerScreenState
           }
 
           final isSelected = index == state.currentIndex;
+          final activeThemeColor = isDark ? AppColors.secondary : AppColors.primary;
           return Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: ChoiceChip(
               label: Text('Report #${index + 1}'),
               selected: isSelected,
               onSelected: (_) => _onSwitchDraft(index),
-              selectedColor: AppColors.primary,
+              selectedColor: activeThemeColor,
               labelStyle: TextStyle(
                 color: isSelected
                     ? Colors.white
@@ -534,7 +604,7 @@ class _MultiBugComposerScreenState
               ),
               side: BorderSide(
                 color: isSelected
-                    ? AppColors.primary
+                    ? activeThemeColor
                     : (isDark ? AppColors.borderDark : AppColors.borderLight),
               ),
             ),
@@ -586,7 +656,7 @@ class _MultiBugComposerScreenState
                         draft.category = cat.label;
                       });
                     },
-                    selectedColor: AppColors.primary,
+                    selectedColor: isDark ? AppColors.secondary : AppColors.primary,
                     labelStyle: TextStyle(
                       color: isSelected
                           ? Colors.white
@@ -818,10 +888,35 @@ class _MultiBugComposerScreenState
                     setState(() => draft.severity = val);
                   }
                 },
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 10,
+                  ),
+                  filled: true,
+                  fillColor: isDark
+                      ? AppColors.surfaceDark
+                      : const Color(0xFFF8FAFC),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.secondary : AppColors.primary,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),
@@ -866,10 +961,35 @@ class _MultiBugComposerScreenState
                     setState(() => draft.priority = val);
                   }
                 },
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 10,
+                  ),
+                  filled: true,
+                  fillColor: isDark
+                      ? AppColors.surfaceDark
+                      : const Color(0xFFF8FAFC),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark ? AppColors.secondary : AppColors.primary,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),

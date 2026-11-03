@@ -331,14 +331,14 @@ class _AddGroupMembersDialogState extends ConsumerState<AddGroupMembersDialog> {
                               ),
                             ),
                             subtitle: Text(
-                              '@${user.username} • ${user.email}',
+                              '@${user.username} • ${user.designation ?? 'Tester'}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 11,
                                 color: isDark
                                     ? AppColors.textMutedDark
-                                    : AppColors.textMutedLight,
+                                    : AppColors.textSecondaryLight,
                               ),
                             ),
                           );

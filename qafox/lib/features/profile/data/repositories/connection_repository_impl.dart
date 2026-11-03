@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../core/constants/firestore_constants.dart';
 import '../../../../core/enums/app_status.dart';
@@ -107,7 +108,33 @@ class ConnectionRepositoryImpl implements ConnectionRepository {
           '${FirestoreConstants.users}/$userId/${FirestoreConstants.connections}',
         )
         .asyncMap((snapshot) async {
-          final userIds = snapshot.docs.map((doc) => doc.id).toList();
+          final userIds = snapshot.docs.map((doc) => doc.id).toSet();
+
+          // Also pull from root connection_requests where status is connected
+          try {
+            final sentReqs = await _firestore.getCollection(
+              FirestoreConstants.connectionRequests,
+              queryBuilder: (q) => q
+                  .where('senderId', isEqualTo: userId)
+                  .where('status', isEqualTo: ConnectionStatus.connected.name),
+            );
+            for (final d in sentReqs.docs) {
+              final rId = d.data()['receiverId'] as String?;
+              if (rId != null && rId != userId) userIds.add(rId);
+            }
+
+            final recvReqs = await _firestore.getCollection(
+              FirestoreConstants.connectionRequests,
+              queryBuilder: (q) => q
+                  .where('receiverId', isEqualTo: userId)
+                  .where('status', isEqualTo: ConnectionStatus.connected.name),
+            );
+            for (final d in recvReqs.docs) {
+              final sId = d.data()['senderId'] as String?;
+              if (sId != null && sId != userId) userIds.add(sId);
+            }
+          } catch (_) {}
+
           if (userIds.isEmpty) return <UserModel>[];
 
           final users = <UserModel>[];
@@ -150,37 +177,46 @@ class ConnectionRepositoryImpl implements ConnectionRepository {
 
   @override
   Future<void> acceptConnectionRequest(ConnectionRequestModel request) async {
-    final batch = _firestore.batch();
-
-    // 1. Update request status to connected
-    final reqRef = _firestore.doc(
+    // 1. Update request status to connected first
+    await _firestore.updateDoc(
       '${FirestoreConstants.connectionRequests}/${request.id}',
-    );
-    batch.update(reqRef, {
-      'status': ConnectionStatus.connected.name,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    // 2. Add each user to the other's connections subcollection
-    final connA = _firestore.doc(
-      '${FirestoreConstants.users}/${request.senderId}/${FirestoreConstants.connections}/${request.receiverId}',
-    );
-    final connB = _firestore.doc(
-      '${FirestoreConstants.users}/${request.receiverId}/${FirestoreConstants.connections}/${request.senderId}',
+      {
+        'status': ConnectionStatus.connected.name,
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
     );
 
-    batch.set(connA, {'connectedAt': FieldValue.serverTimestamp()});
-    batch.set(connB, {'connectedAt': FieldValue.serverTimestamp()});
+    // 2. Add to receiver's own connections subcollection (always succeeds for current user)
+    try {
+      final connReceiver = _firestore.doc(
+        '${FirestoreConstants.users}/${request.receiverId}/${FirestoreConstants.connections}/${request.senderId}',
+      );
+      await connReceiver.set({'connectedAt': FieldValue.serverTimestamp()});
+    } catch (e) {
+      debugPrint('Receiver connection write error: $e');
+    }
 
-    await batch.commit();
+    // 3. Add to sender's connections subcollection
+    try {
+      final connSender = _firestore.doc(
+        '${FirestoreConstants.users}/${request.senderId}/${FirestoreConstants.connections}/${request.receiverId}',
+      );
+      await connSender.set({'connectedAt': FieldValue.serverTimestamp()});
+    } catch (e) {
+      debugPrint('Sender connection write error: $e');
+    }
 
-    // 3. Create or prepare individual chat between them
-    await getOrCreateIndividualChat(
-      request.senderId,
-      request.receiverId,
-      request.senderName,
-      request.receiverName,
-    );
+    // 4. Create or prepare individual chat between them
+    try {
+      await getOrCreateIndividualChat(
+        request.senderId,
+        request.receiverId,
+        request.senderName,
+        request.receiverName,
+      );
+    } catch (e) {
+      debugPrint('Individual chat create error: $e');
+    }
   }
 
   @override

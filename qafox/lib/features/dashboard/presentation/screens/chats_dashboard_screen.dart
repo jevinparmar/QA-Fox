@@ -159,7 +159,7 @@ class _ChatsDashboardScreenState extends ConsumerState<ChatsDashboardScreen>
                   preferredSize: const Size.fromHeight(48),
                   child: TabBar(
                     controller: _tabController,
-                    indicatorColor: AppColors.primary,
+                    indicatorColor: isDark ? AppColors.secondary : AppColors.primary,
                     indicatorWeight: 3,
                     labelColor: isDark ? Colors.white : AppColors.primary,
                     unselectedLabelColor: isDark
@@ -278,14 +278,39 @@ class _ChatsDashboardScreenState extends ConsumerState<ChatsDashboardScreen>
                             filled: true,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide.none,
+                              borderSide: BorderSide(
+                                color: isDark
+                                    ? AppColors.borderDark
+                                    : AppColors.borderLight,
+                                width: 1,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide(
+                                color: isDark
+                                    ? AppColors.borderDark
+                                    : AppColors.borderLight,
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide(
+                                color: isDark
+                                    ? AppColors.secondary
+                                    : AppColors.primary,
+                                width: 1.5,
+                              ),
                             ),
                           ),
                         ),
                       ),
                       TabBar(
                         controller: _tabController,
-                        indicatorColor: AppColors.primary,
+                        indicatorColor: isDark
+                            ? AppColors.secondary
+                            : AppColors.primary,
                         indicatorWeight: 3,
                         labelColor: isDark ? Colors.white : AppColors.primary,
                         unselectedLabelColor: isDark
@@ -458,8 +483,8 @@ class _ChatsDashboardScreenState extends ConsumerState<ChatsDashboardScreen>
                 bottom: 0,
                 child: Container(
                   padding: const EdgeInsets.all(3),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.secondary : AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.group, size: 10, color: Colors.white),
@@ -469,7 +494,8 @@ class _ChatsDashboardScreenState extends ConsumerState<ChatsDashboardScreen>
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.85),
+                    color: (isDark ? AppColors.secondary : AppColors.primary)
+                        .withValues(alpha: 0.85),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.check, color: Colors.white, size: 26),
@@ -499,7 +525,7 @@ class _ChatsDashboardScreenState extends ConsumerState<ChatsDashboardScreen>
                 style: TextStyle(
                   fontSize: 11.5,
                   color: unread > 0
-                      ? AppColors.primary
+                      ? (isDark ? AppColors.secondary : AppColors.primary)
                       : (isDark
                             ? AppColors.textMutedDark
                             : AppColors.textMutedLight),

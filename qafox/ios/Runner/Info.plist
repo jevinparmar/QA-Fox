@@ -66,5 +66,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>QA Fox needs access to your camera to capture bug evidence and profile photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>QA Fox needs access to your photos and videos to attach screenshots and video recordings to bug reports.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>QA Fox needs access to your microphone when recording bug walkthrough videos.</string>
 </dict>
 </plist>

@@ -50,14 +50,14 @@ class AppBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = backgroundColor ?? color.withValues(alpha: 0.12);
+    final bg = backgroundColor ?? color.withValues(alpha: 0.14);
 
     return Container(
       padding: padding,
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.25), width: 0.8),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.28), width: 0.9),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -71,7 +71,7 @@ class AppBadge extends StatelessWidget {
             style: TextStyle(
               color: color,
               fontSize: fontSize,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               letterSpacing: 0.2,
             ),
           ),

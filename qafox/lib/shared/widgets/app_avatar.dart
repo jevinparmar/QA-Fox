@@ -98,7 +98,7 @@ class AppAvatar extends StatelessWidget {
       child: Text(
         initials,
         style: TextStyle(
-          color: AppColors.primary,
+          color: isDark ? AppColors.secondary : AppColors.primary,
           fontSize: size * 0.4,
           fontWeight: FontWeight.bold,
         ),

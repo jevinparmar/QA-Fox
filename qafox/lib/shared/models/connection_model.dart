@@ -51,6 +51,17 @@ class ConnectionRequestModel {
     );
   }
 
+  factory ConnectionRequestModel.empty() {
+    return const ConnectionRequestModel(
+      id: '',
+      senderId: '',
+      senderName: '',
+      receiverId: '',
+      receiverName: '',
+      status: ConnectionStatus.pendingSent,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,

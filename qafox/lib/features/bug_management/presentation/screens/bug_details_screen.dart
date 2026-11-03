@@ -259,15 +259,18 @@ class _BugDetailsScreenState extends ConsumerState<BugDetailsScreen> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        color: (isDark ? AppColors.secondary : AppColors.primary)
+                            .withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         bug.category.label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
+                          color: isDark
+                              ? AppColors.secondary
+                              : AppColors.primary,
                         ),
                       ),
                     ),
@@ -655,15 +658,25 @@ class _BugDetailsScreenState extends ConsumerState<BugDetailsScreen> {
                           filled: true,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(
+                              color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                              width: 1,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide(
+                              color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                              width: 1,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.secondary : AppColors.primary,
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(

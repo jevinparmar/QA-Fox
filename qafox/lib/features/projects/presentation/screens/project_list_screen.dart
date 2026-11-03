@@ -69,7 +69,7 @@ class ProjectListScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'project_list_fab',
         onPressed: () => context.push(RoutePaths.createProject),
-        backgroundColor: AppColors.primary,
+        backgroundColor: isDark ? AppColors.secondary : AppColors.primary,
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text(
           'New Project',
@@ -166,12 +166,13 @@ class ProjectListScreen extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.12),
+                      color: (isDark ? AppColors.secondary : AppColors.primary)
+                          .withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       platformIcon,
-                      color: AppColors.primary,
+                      color: isDark ? AppColors.secondary : AppColors.primary,
                       size: 24,
                     ),
                   ),
@@ -288,7 +289,7 @@ class ProjectListScreen extends ConsumerWidget {
                       ),
                     ),
                     style: TextButton.styleFrom(
-                      foregroundColor: AppColors.primary,
+                      foregroundColor: isDark ? AppColors.secondary : AppColors.primary,
                       padding: EdgeInsets.zero,
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,

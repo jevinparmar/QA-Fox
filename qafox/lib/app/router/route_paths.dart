@@ -25,6 +25,7 @@ class RoutePaths {
   static const String createOrganization = '/organizations/create';
   static const String organizationDetails = '/organizations/:organizationId';
   static const String editProfile = '/profile/edit';
+  static const String userProfile = '/user/:userId';
   static const String settings = '/settings';
   static const String notifications = '/notifications';
 
@@ -33,6 +34,7 @@ class RoutePaths {
   static String bugDetailsPath(String bugId) => '/bug/$bugId';
   static String bugBoardPath(String projectId) => '/project/$projectId/bugs';
   static String projectDetailsPath(String projectId) => '/projects/$projectId';
+  static String userProfilePath(String userId) => '/user/$userId';
   static String organizationDetailsPath(String orgId) =>
       '/organizations/$orgId';
 }

@@ -467,15 +467,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         final isGroup = chat?.type == ChatType.projectGroup;
         final chatTitle = chat?.name ?? 'Chat';
         final projectId = chat?.projectId;
+        final otherUserId = chat?.participantIds.firstWhere(
+          (id) => id != currentUser?.id,
+          orElse: () => '',
+        );
 
         return Scaffold(
           appBar: AppBar(
             titleSpacing: 0,
             title: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: isGroup && projectId != null
-                  ? () => context.push(RoutePaths.projectDetailsPath(projectId))
-                  : null,
+              onTap: () {
+                if (isGroup && projectId != null) {
+                  context.push(RoutePaths.projectDetailsPath(projectId));
+                } else if (!isGroup && otherUserId != null && otherUserId.isNotEmpty) {
+                  context.push(RoutePaths.userProfilePath(otherUserId));
+                }
+              },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -771,6 +779,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       ? const Color(0xFF0F172A)
                       : const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                    width: 1,
+                  ),
                 ),
                 child: TextField(
                   controller: _textController,
@@ -791,8 +803,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
             // Send Button
             Container(
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.secondary : AppColors.primary,
                 shape: BoxShape.circle,
               ),
               child: IconButton(

@@ -129,6 +129,7 @@ class _OrganizationDetailsScreenState
     final projectsAsync = ref.watch(
       projectsByOrgStreamProvider(widget.organizationId),
     );
+    final currentUserId = ref.watch(currentFirebaseUserProvider)?.uid;
 
     return StreamBuilder(
       stream: orgStream,
@@ -264,7 +265,9 @@ class _OrganizationDetailsScreenState
                             style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                           subtitle: Text(
-                            m.email,
+                            m.userId == currentUserId
+                                ? m.email
+                                : 'Organization Member',
                             style: const TextStyle(fontSize: 12),
                           ),
                           trailing: Container(
