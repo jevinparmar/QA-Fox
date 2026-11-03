@@ -9,6 +9,8 @@ import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../shared/providers/firebase_providers.dart';
+import '../../../../shared/providers/storage_providers.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -24,6 +26,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _rememberMe = true;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final session = ref.read(sessionServiceProvider);
+      if (session.savedEmail != null && session.savedEmail!.isNotEmpty) {
+        _emailController.text = session.savedEmail!;
+        setState(() {
+          _rememberMe = session.isRememberMe;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -43,6 +60,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             email: _emailController.text,
             password: _passwordController.text,
           );
+
+      // Save user session and remember me preferences
+      final user = ref.read(authServiceProvider).currentUser;
+      if (user != null) {
+        await ref.read(sessionServiceProvider).saveSession(
+              userId: user.uid,
+              email: _emailController.text.trim(),
+              rememberMe: _rememberMe,
+            );
+      }
+
       if (mounted) {
         context.go(RoutePaths.chats);
       }

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../shared/models/user_model.dart';
 import '../../../../shared/providers/firebase_providers.dart';
+import '../../../../shared/providers/storage_providers.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 
@@ -69,6 +70,7 @@ class AuthController extends AsyncNotifier<UserModel?> {
 
   Future<void> signOut() async {
     await ref.read(authRepositoryProvider).signOut();
+    await ref.read(sessionServiceProvider).clearSession();
     state = const AsyncValue.data(null);
   }
 }

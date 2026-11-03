@@ -16,6 +16,7 @@ class RouteGuards {
         location == RoutePaths.login ||
         location == RoutePaths.register ||
         location == RoutePaths.forgotPassword ||
+        location == RoutePaths.onboarding ||
         location == RoutePaths.splash;
 
     if (!isAuthenticated && !isAuthRoute) {

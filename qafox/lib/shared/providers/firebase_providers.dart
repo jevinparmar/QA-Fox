@@ -59,7 +59,8 @@ final authStateStreamProvider = StreamProvider<User?>((ref) {
 });
 
 final currentFirebaseUserProvider = Provider<User?>((ref) {
-  return ref.watch(authStateStreamProvider).value;
+  final streamValue = ref.watch(authStateStreamProvider);
+  return streamValue.asData?.value ?? ref.watch(authServiceProvider).currentUser;
 });
 
 final currentUserModelStreamProvider = StreamProvider<UserModel?>((ref) {

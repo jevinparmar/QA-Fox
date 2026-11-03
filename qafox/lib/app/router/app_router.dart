@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../shared/providers/firebase_providers.dart';
+import '../../shared/providers/storage_providers.dart';
 
 import '../../features/authentication/presentation/screens/forgot_password_screen.dart';
 import '../../features/authentication/presentation/screens/login_screen.dart';
@@ -25,6 +30,7 @@ import '../../features/projects/presentation/screens/create_project_screen.dart'
 import '../../features/projects/presentation/screens/project_details_screen.dart';
 import '../../features/projects/presentation/screens/project_list_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import 'route_guards.dart';
 import 'route_names.dart';
 import 'route_paths.dart';
 
@@ -59,10 +65,36 @@ Page<dynamic> _buildFadeSlidePage({
   );
 }
 
+class GoRouterRefreshStream extends ChangeNotifier {
+  late final StreamSubscription<dynamic> _subscription;
+
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
+
 final routerProvider = Provider<GoRouter>((ref) {
+  final authService = ref.watch(authServiceProvider);
+  final refreshStream = GoRouterRefreshStream(authService.authStateChanges);
+  ref.onDispose(refreshStream.dispose);
+
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: RoutePaths.splash,
+    refreshListenable: refreshStream,
+    redirect: (context, state) {
+      final user = authService.currentUser;
+      final session = ref.read(sessionServiceProvider);
+      final isAuthenticated = user != null || session.isLoggedIn;
+      return RouteGuards.authRedirect(context, state, isAuthenticated);
+    },
     routes: [
       // Splash
       GoRoute(

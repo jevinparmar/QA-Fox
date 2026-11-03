@@ -9,6 +9,8 @@ import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../shared/providers/firebase_providers.dart';
+import '../../../../shared/providers/storage_providers.dart';
 import '../providers/auth_provider.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -62,6 +64,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ? _phoneController.text
                 : null,
           );
+
+      // Save user session
+      final user = ref.read(authServiceProvider).currentUser;
+      if (user != null) {
+        await ref.read(sessionServiceProvider).saveSession(
+              userId: user.uid,
+              email: _emailController.text.trim(),
+              rememberMe: true,
+            );
+      }
+
       if (mounted) {
         context.go(RoutePaths.onboarding);
       }

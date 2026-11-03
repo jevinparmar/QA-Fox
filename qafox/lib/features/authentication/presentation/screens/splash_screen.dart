@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/asset_constants.dart';
 import '../../../../shared/providers/firebase_providers.dart';
+import '../../../../shared/providers/storage_providers.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -24,14 +26,44 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _checkAuth() async {
-    await Future.delayed(const Duration(milliseconds: 2200));
+    // Show splash branding animation
+    await Future.delayed(const Duration(milliseconds: 1800));
     if (!mounted) return;
 
-    final user = ref.read(currentFirebaseUserProvider);
+    final authService = ref.read(authServiceProvider);
+    final sessionService = ref.read(sessionServiceProvider);
+
+    // 1. Check synchronous currentUser restored by Firebase
+    User? user = authService.currentUser;
+
+    // 2. If null, wait up to 1200ms for authStateChanges stream
+    if (user == null) {
+      try {
+        user = await authService.authStateChanges
+            .first
+            .timeout(const Duration(milliseconds: 1200), onTimeout: () => null);
+      } catch (_) {
+        user = null;
+      }
+    }
+
+    if (!mounted) return;
+
+    // 3. Navigate based on session validity
     if (user != null) {
-      context.go(RoutePaths.chats);
+      await sessionService.saveSession(
+        userId: user.uid,
+        email: user.email ?? '',
+        rememberMe: sessionService.isRememberMe,
+      );
+      if (mounted) {
+        context.go(RoutePaths.chats);
+      }
     } else {
-      context.go(RoutePaths.login);
+      await sessionService.clearSession();
+      if (mounted) {
+        context.go(RoutePaths.login);
+      }
     }
   }
 
